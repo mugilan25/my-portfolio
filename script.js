@@ -4,7 +4,7 @@ function reveal() {
     for (let i = 0; i < reveals.length; i++) {
         const windowHeight = window.innerHeight;
         const revealTop = reveals[i].getBoundingClientRect().top;
-        const revealPoint = 150;
+        const revealPoint = 100;
 
         if (revealTop < windowHeight - revealPoint) {
             reveals[i].classList.add('active');
@@ -12,9 +12,30 @@ function reveal() {
     }
 }
 
+// Use IntersectionObserver for better performance
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => {
+    observer.observe(el);
+});
+
+// Also keep scroll listener as fallback
 window.addEventListener('scroll', reveal);
 // Trigger reveal on load
-document.addEventListener('DOMContentLoaded', reveal);
+document.addEventListener('DOMContentLoaded', () => {
+    reveal();
+});
 
 // Typing Animation
 const typingTexts = [
